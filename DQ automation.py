@@ -1,14 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[5]:
-
-
 import pandas as pd
 import numpy as np
 import re
 from datetime import *
-
 ############################################################
 # DataFrame and Dictionaries
 # Get the data
@@ -94,4 +87,3 @@ null_test(df)
 date_test(df)
 dict_test(df,dict_column)
 error_log_generator()
-
