@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[5]:
-
-
 import pandas as pd
 import numpy as np
 import re
@@ -12,9 +6,9 @@ from datetime import *
 ############################################################
 # DataFrame and Dictionaries
 # Get the data
-df = pd.read_csv('DQ_Demo.txt')
+df = pd.read_csv(Path)
 # if needed, get additional data like dictionary df's and there columns
-dict_column = pd.read_csv('Locations.txt')['location']
+dict_column = pd.read_csv(Path)[Column_name]
 ###########################################################
 def data_setup():
     answer = input('Have you setup a DataFrame and Dictionaries for work?(Y/N) ')
