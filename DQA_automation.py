@@ -6,9 +6,9 @@ from datetime import *
 ############################################################
 # DataFrame and Dictionaries
 # Get the data
-df = pd.read_csv('DQ_Demo.txt')
-# if needed, get additional data like dictionary df's and there columns
-dict_column = pd.read_csv('Locations.txt')['location']
+df = pd.read_csv('')
+# if needed, get additional data like dictionaries and there list of values.
+dict_column = pd.read_csv('')['']
 ###########################################################
 def data_setup():
     answer = input('Have you setup a DataFrame and Dictionaries for work?(Y/N) ')
