@@ -6,9 +6,9 @@ from datetime import *
 ############################################################
 # DataFrame and Dictionaries
 # Get the data
-df = pd.read_csv(Path)
+df = pd.read_csv('DQ_Demo.txt')
 # if needed, get additional data like dictionary df's and there columns
-dict_column = pd.read_csv(Path)[Column_name]
+dict_column = pd.read_csv('Locations.txt')['location']
 ###########################################################
 def data_setup():
     answer = input('Have you setup a DataFrame and Dictionaries for work?(Y/N) ')
@@ -35,6 +35,51 @@ def null_test(df):
                 row_index_list.append(index),
                 dq_test_type_list.append('null_test'),
                 runtime_list.append(str(datetime.now()))
+################################################################
+def alphanumeric_test(df):
+    column2check = input(f'''Please select columns to check for alphanumeric only: {(', '.join(df.columns))}.
+your choices are(column1,column2)... ''').split(',')
+    
+    for column in df[column2check]:
+        for index, value in enumerate(df[column]):
+            if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
+                    if len(re.sub('^[a-zA-Z0-9]*$','',str(value)))> 0:
+                        table_list.append(table_name),
+                        column_list.append(column),
+                        original_value_list.append(value),
+                        row_index_list.append(index),
+                        dq_test_type_list.append('alphanumeric_test'),
+                        runtime_list.append(str(datetime.now()))
+################################################################
+def name_test(df):
+    column2check = input(f'''Please select columns to check for names(A-z and א-ת) only: {(', '.join(df.columns))}.
+your choices are(column1,column2)... ''').split(',')
+    
+    for column in df[column2check]:
+        for index, value in enumerate(df[column]):
+            if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
+                    if len(re.sub('^[a-zA-Zא-ת\s]*$','',str(value)))> 0:
+                        table_list.append(table_name),
+                        column_list.append(column),
+                        original_value_list.append(value),
+                        row_index_list.append(index),
+                        dq_test_type_list.append('name_test'),
+                        runtime_list.append(str(datetime.now()))
+################################################################
+def digit_test(df):
+    column2check = input(f'''Please select columns to check for digit only: {(', '.join(df.columns))}.
+your choices are(column1,column2)... ''').split(',')
+    
+    for column in df[column2check]:
+        for index, value in enumerate(df[column]):
+            if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
+                    if len(re.sub('^[0-9]*$','',str(value)))> 0:
+                        table_list.append(table_name),
+                        column_list.append(column),
+                        original_value_list.append(value),
+                        row_index_list.append(index),
+                        dq_test_type_list.append('digit_test'),
+                        runtime_list.append(str(datetime.now()))
 ################################################################
 def date_test(df):
     date_columns = input(f'''Please select date columns: {(', '.join(df.columns))}.
@@ -82,7 +127,9 @@ def error_log_generator():
 data_setup()
 preliminary_settings()
 null_test(df)
+alphanumeric_test(df)
+name_test(df)
+digit_test(df)
 date_test(df)
 dict_test(df,dict_column)
 error_log_generator()
-
