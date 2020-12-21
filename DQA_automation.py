@@ -27,7 +27,7 @@ def preliminary_settings():
 ############################################################
 def null_test(df):
     for column in df.columns:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))== 0) or (len(re.sub('^\s*$','',str(value)))== 0) or (pd.isnull(value)):
                 table_list.append(table_name),
                 column_list.append(column),
@@ -41,7 +41,7 @@ def alphanumeric_test(df):
 your choices are(column1,column2)... ''').split(',')
     
     for column in df[column2check]:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                     if len(re.sub('^[a-zA-Z0-9]*$','',str(value)))> 0:
                         table_list.append(table_name),
@@ -56,7 +56,7 @@ def name_test(df):
 your choices are(column1,column2)... ''').split(',')
     
     for column in df[column2check]:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                     if len(re.sub('^[a-zA-Zא-ת\s]*$','',str(value)))> 0:
                         table_list.append(table_name),
@@ -71,7 +71,7 @@ def digit_test(df):
 your choices are(column1,column2)... ''').split(',')
     
     for column in df[column2check]:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                     if len(re.sub('^[0-9]*$','',str(value)))> 0:
                         table_list.append(table_name),
@@ -85,7 +85,7 @@ def date_test(df):
     date_columns = input(f'''Please select date columns: {(', '.join(df.columns))}.
 your choices are(column1,column2)... ''').split(',')
     for column in df[date_columns]:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             try:
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                     if (pd.to_datetime(value) > date.today()) or (pd.to_datetime(value) < pd.to_datetime('1900-01-01')):
@@ -108,7 +108,7 @@ def phone_test(df):
 your choices are(column1,column2)... ''').split(',')
     
     for column in df[column2check]:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                     value = str(value).replace('-','')
                     value = value.zfill(10)
@@ -125,7 +125,7 @@ def dict_test(df,dict_column):
 your choices are(column1,column2)... ''').split(',')
     
     for column in df[column2check]:
-        for index, value in enumerate(df[column],start=1):
+        for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                     if str(value) not in [str(item) for item in dict_column]:
                         table_list.append(table_name),
