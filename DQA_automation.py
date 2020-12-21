@@ -110,9 +110,7 @@ your choices are(column1,column2)... ''').split(',')
     for column in df[column2check]:
         for index, value in enumerate(df[column]):
             if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                    value = str(value).replace('-','')
-                    value = value.zfill(10)
-                    if len(re.sub('^\+?(972|0)(\-)?0?(([23489]{1}\d{7})|[5]{1}\d{8})$','',str(value)))> 0:
+                    if len(re.sub('^\+?(972|0)(\-)?0?(([23489]{1}\d{7})|[5]{1}\d{8})$','',str((str(value).replace('-','')).zfill(10))))> 0:
                         table_list.append(table_name),
                         column_list.append(column),
                         original_value_list.append(value),
