@@ -103,6 +103,23 @@ your choices are(column1,column2)... ''').split(',')
                 dq_test_type_list.append('date_test'),
                 runtime_list.append(str(datetime.now()))
 #########################################################
+def phone_test(df):
+    column2check = input(f'''Please select columns to check for israeli phone format: {(', '.join(df.columns))}.
+your choices are(column1,column2)... ''').split(',')
+    
+    for column in df[column2check]:
+        for index, value in enumerate(df[column]):
+            if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
+                    value = str(value).replace('-','')
+                    value = value.zfill(10)
+                    if len(re.sub('^\+?(972|0)(\-)?0?(([23489]{1}\d{7})|[5]{1}\d{8})$','',str(value)))> 0:
+                        table_list.append(table_name),
+                        column_list.append(column),
+                        original_value_list.append(value),
+                        row_index_list.append(index),
+                        dq_test_type_list.append('phone_test'),
+                        runtime_list.append(str(datetime.now()))
+#########################################################
 def dict_test(df,dict_column):
     column2check = input(f'''Please select columns to check against list: {(', '.join(df.columns))}.
 your choices are(column1,column2)... ''').split(',')
@@ -118,6 +135,18 @@ your choices are(column1,column2)... ''').split(',')
                         dq_test_type_list.append('dict_test'),
                         runtime_list.append(str(datetime.now()))
 #########################################################
+def duplicate_test(df):
+    column2check = input(f'''Please select columns to set as unique id of row to find duplicate rows: {(', '.join(df.columns))}.
+your choices are(column1,column2)... ''').split(',')
+    
+    for value in df.index[df.duplicated(subset=column2check, keep=False)]:
+        table_list.append(table_name),
+        column_list.append(column2check),
+        original_value_list.append(None),
+        row_index_list.append(value),
+        dq_test_type_list.append('duplicate_test'),
+        runtime_list.append(str(datetime.now()))
+#########################################################
 def error_log_generator():
     error_log = pd.DataFrame(list(zip(table_list, column_list, row_index_list, original_value_list, 
                                  dq_test_type_list, runtime_list)), 
@@ -131,5 +160,7 @@ alphanumeric_test(df)
 name_test(df)
 digit_test(df)
 date_test(df)
+phone_test(df)
 dict_test(df,dict_column)
+duplicate_test(df)
 error_log_generator()
