@@ -139,8 +139,8 @@ your choices are(column1,column2)... ''').split(',')
     
     for value in df.index[df.duplicated(subset=column2check, keep=False)]:
         table_list.append(table_name),
-        column_list.append(column2check),
-        original_value_list.append(list(df.loc[value,column2check])),
+        column_list.append(', '.join([str(item) for item in column2check])),
+        original_value_list.append(', '.join([str(item) for item in df.loc[value,column2check]])),
         row_index_list.append(value),
         dq_test_type_list.append('duplicate_test'),
         runtime_list.append(str(datetime.now()))
@@ -149,16 +149,24 @@ def error_log_generator():
     error_log = pd.DataFrame(list(zip(table_list, column_list, row_index_list, original_value_list, 
                                  dq_test_type_list, runtime_list)), 
        columns =['Table', 'Column', 'Row_index', 'Original_value', 'DQ_test_type', 'Runtime'])
-    return error_log
+    return error_log.drop_duplicates(subset=['Column','Row_index'])
 #########################################################
 data_setup()
 preliminary_settings()
+print()
 null_test(df)
-alphanumeric_test(df)
-name_test(df)
-digit_test(df)
-date_test(df)
-phone_test(df)
 dict_test(df,dict_column)
+print()
+alphanumeric_test(df)
+print()
+digit_test(df)
+print()
+date_test(df)
+print()
+phone_test(df)
+print()
+name_test(df)
+print()
 duplicate_test(df)
+print()
 error_log_generator()
