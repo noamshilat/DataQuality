@@ -15,7 +15,10 @@
         # eror_log_save
     # Notice
         # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
-        # After initial setup of a data set and table name any test can be used. Do not forget, after running tests run the error_log_generator method to generate an error report.
+        # After initial setup of a data set and table name any test can be used. Do not forget,
+            # after running tests run the error_log_generator method to generate an error report.
+        # When defining a data set it is important to make sure that all the fields are set as a string,
+            # null values will still remain as a float, do not worry the code knows how to deal with them. This will prevent unwanted errors.
         
 import pandas as pd
 import numpy as np
