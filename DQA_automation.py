@@ -1,3 +1,20 @@
+# Documentation
+
+    # Methods
+        # null_test
+        # alphanumeric_test
+        # name_test
+        # digit_test
+        # date_test
+        # phone_test
+        # dict_test
+        # context_test
+        # duplicate_test
+        # error_log_generator
+    # Notice
+        # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
+        # After initial setup of a data set and table name any test can be used. Do not forget, after running tests run the error_log_generator method to generate an error report.
+        # 
 class DataQuality:
     
     def __init__(self,table_name,df):
