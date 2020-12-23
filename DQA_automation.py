@@ -156,7 +156,7 @@ class DataQuality:
     def error_log_show(self):
         return self.error_log
     
-    def eror_log_save2excel(self,path):
+    def eror_log_save2excel(self,filename):
         cwd = os.getcwd()
-        self.error_log.to_excel(path,index=False)
+        self.error_log.to_excel(filename+'.xlsx',index=False)
         print(f'File saved to {cwd} successfully!')
