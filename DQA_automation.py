@@ -11,10 +11,19 @@
         # context_test
         # duplicate_test
         # error_log_generator
+        # error_log_show
+        # eror_log_save
     # Notice
         # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
         # After initial setup of a data set and table name any test can be used. Do not forget, after running tests run the error_log_generator method to generate an error report.
-        # 
+        
+import pandas as pd
+import numpy as np
+import re
+from datetime import *
+import os
+
+
 class DataQuality:
     
     def __init__(self,table_name,df):
@@ -139,7 +148,15 @@ class DataQuality:
             self.runtime_list.append(str(datetime.now()))
             
     def error_log_generator(self):
-        error_log = pd.DataFrame(list(zip(self.table_list, self.column_list, self.row_index_list, self.original_value_list, 
+        self.error_log = pd.DataFrame(list(zip(self.table_list, self.column_list, self.row_index_list, self.original_value_list, 
                                      self.dq_test_type_list, self.runtime_list)), 
-           columns =['Table', 'Column', 'Row_index', 'Original_value', 'DQ_test_type', 'Runtime'])
-        return error_log.drop_duplicates(subset=['Column','Row_index']).reset_index()
+           columns =['Table', 'Column', 'Row_index', 'Original_value', 'DQ_test_type', 'Runtime']).drop_duplicates(subset=['Column','Row_index']).reset_index(drop=True)
+        print('Error log created successfully!')
+        
+    def error_log_show(self):
+        return self.error_log
+    
+    def eror_log_save2excel(self,path):
+        cwd = os.getcwd()
+        self.error_log.to_excel(path,index=False)
+        print(f'File saved to {cwd} successfully!')
