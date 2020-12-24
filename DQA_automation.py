@@ -1,6 +1,7 @@
 # Documentation
 
     # Methods
+        # df_show
         # null_test
         # alphanumeric_test
         # name_test
@@ -11,8 +12,10 @@
         # context_test
         # duplicate_test
         # error_log_generator
+        # fully_quality_df_show
+        # fully_quality_df_save2excel
         # error_log_show
-        # eror_log_save
+        # error_log_save2excel
     # Notice
         # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
         # After initial setup of a data set and table name any test can be used. Do not forget,
@@ -38,6 +41,10 @@ class DataQuality:
         self.dq_test_type_list = []
         self.runtime_list = []
         self.df = df
+        self.cwd = os.getcwd()
+        
+    def df_show(self):
+        return self.df
     
     def null_test(self):
         for column in self.df.columns:
@@ -110,7 +117,7 @@ class DataQuality:
         for column in self.df[phone_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^\+?(972|0)(\-)?0?(([23489]{1}\d{7})|[5]{1}\d{8})$','',value.replace('-','').zfill(10)))> 0:
+                        if len(re.sub('^\+?(972|0)(\-)?0?(([23489]{1}\d{7})|[5]{1}\d{8})$','',(''.join(value.split()).replace('-','').strip().zfill(10))))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
@@ -119,19 +126,18 @@ class DataQuality:
                             self.runtime_list.append(str(datetime.now()))
                             
     def dict_test(self,dict_column2check,list_column):
-        for column in self.df[dict_column2check]:
-            for index, value in enumerate(self.df[column]):
+            for index, value in enumerate(self.df[''.join(dict_column2check)]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
                         if value not in [str(item) for item in list_column]:
                             self.table_list.append(self.table_name),
-                            self.column_list.append(column),
+                            self.column_list.append(''.join(dict_column2check)),
                             self.original_value_list.append(value),
                             self.row_index_list.append(index),
                             self.dq_test_type_list.append('dict_test'),
                             self.runtime_list.append(str(datetime.now()))
                             
     def context_test(self,context_column2check,context_column2check_value,context_column2check_against,context_list2check):
-        for index, value in enumerate(self.df[context_column2check]):
+        for index, value in enumerate(self.df[''.join(context_column2check)]):
             if self.df.loc[index, ''.join(context_column2check)] == str(context_column2check_value):
                 if self.df.loc[index,''.join(context_column2check_against)] not in [str(item) for item in context_list2check]:
                     self.table_list.append(self.table_name),
@@ -156,10 +162,17 @@ class DataQuality:
            columns =['Table', 'Column', 'Row_index', 'Original_value', 'DQ_test_type', 'Runtime']).drop_duplicates(subset=['Column','Row_index']).reset_index(drop=True)
         print('Error log created successfully!')
         
+    def fully_quality_df_show(self):
+        self.fully_quality_df = self.df.loc[~self.df.index.isin(set(self.error_log['Row_index']))]
+        return self.fully_quality_df
+    
+    def fully_quality_df_save2excel(self):
+        self.fully_quality_df.to_excel(self.table_name+'_FullyQuality_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
+        print(f'File saved to {self.cwd} successfully!')   
+    
     def error_log_show(self):
         return self.error_log
     
-    def eror_log_save2excel(self,filename):
-        cwd = os.getcwd()
-        self.error_log.to_excel(filename+'.xlsx',index=False)
-        print(f'File saved to {cwd} successfully!')
+    def error_log_save2excel(self):
+        self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
+        print(f'File saved to {self.cwd} successfully!')
