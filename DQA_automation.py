@@ -44,7 +44,7 @@ class DataQuality:
         self.cwd = os.getcwd()
         
     def df_show(self):
-        return self.df
+        return display(self.df)
     
     def null_test(self):
         for column in self.df.columns:
@@ -162,17 +162,17 @@ class DataQuality:
            columns =['Table', 'Column', 'Row_index', 'Original_value', 'DQ_test_type', 'Runtime']).drop_duplicates(subset=['Column','Row_index']).reset_index(drop=True)
         print('Error log created successfully!')
         
-    def fully_quality_df_show(self):
-        self.fully_quality_df = self.df.loc[~self.df.index.isin(set(self.error_log['Row_index']))]
-        return self.fully_quality_df
-    
-    def fully_quality_df_save2excel(self):
-        self.fully_quality_df.to_excel(self.table_name+'_FullyQuality_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
-        print(f'File saved to {self.cwd} successfully!')   
-    
     def error_log_show(self):
-        return self.error_log
+        return display(self.error_log)
     
     def error_log_save2excel(self):
         self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
+        print(f'File saved to {self.cwd} successfully!')
+    
+    def fully_quality_df_show(self):
+        self.fully_quality_df = self.df.loc[~self.df.index.isin(set(self.error_log['Row_index']))]
+        return display(self.fully_quality_df)
+    
+    def fully_quality_df_save2excel(self):
+        self.fully_quality_df.to_excel(self.table_name+'_FullyQuality_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
         print(f'File saved to {self.cwd} successfully!')
