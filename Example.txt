@@ -1,4 +1,5 @@
 dqa1 = DataQuality(table_name="",df=pd.read_csv('.txt',sep='\t',dtype=str))
+dqa1.df_show()
 dqa1.null_test()
 dqa1.alphanumeric_test(['',''])
 dqa1.name_test(['','',''])
