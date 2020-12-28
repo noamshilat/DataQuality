@@ -122,7 +122,7 @@ class DataQuality:
         for column in self.df[phone_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^\+?(972|0|07)(\-)?0?(([2346789]{1}\d{7})|[5]{1}\d{8})$','',(''.join(value.split()).replace('-','').strip().zfill(10))))> 0:
+                        if len(re.sub('^(0|972|)(?:[23489]|5[0-689]|7[234679])(?![01])(\d{7})$','',(''.join(value.split()).replace('-','').strip().zfill(10))))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
