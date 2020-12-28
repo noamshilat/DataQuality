@@ -12,10 +12,10 @@
         # context_test
         # duplicate_test
         # error_log_generator
-        # fully_quality_df_show
-        # fully_quality_df_save2excel
         # error_log_show
         # error_log_save2excel
+        # fully_quality_df_show
+        # fully_quality_df_save2excel
     # Notice
         # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
         # After initial setup of a data set and table name any test can be used. Do not forget,
