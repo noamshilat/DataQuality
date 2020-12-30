@@ -4,6 +4,7 @@
         # df_show
         # df_save2excel
         # null_test
+        # null_specific_test
         # alphanumeric_test
         # name_test
         # digit_test
@@ -29,6 +30,7 @@ import numpy as np
 import re
 from datetime import *
 import os
+from sqlalchemy import create_engine
 
 
 class DataQuality:
@@ -53,6 +55,17 @@ class DataQuality:
     
     def null_test(self):
         for column in self.df.columns:
+            for index, value in enumerate(self.df[column]):
+                if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))== 0) or (len(re.sub('^\s*$','',str(value)))== 0) or (pd.isnull(value)):
+                    self.table_list.append(self.table_name),
+                    self.column_list.append(column),
+                    self.original_value_list.append(value),
+                    self.row_index_list.append(index),
+                    self.dq_test_type_list.append('null_test'),
+                    self.runtime_list.append(str(datetime.now()))
+                    
+    def null_specific_test(self,null_columns2check):
+        for column in self.df[null_columns2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))== 0) or (len(re.sub('^\s*$','',str(value)))== 0) or (pd.isnull(value)):
                     self.table_list.append(self.table_name),
