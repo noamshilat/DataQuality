@@ -1,24 +1,30 @@
 # Documentation
 
     # Methods
-        # df_show
-        # df_save2excel
-        # null_test
-        # null_specific_test
-        # alphanumeric_test
-        # name_test
-        # digit_test
-        # date_test
-        # phone_test
-        # dict_test
-        # context_test
-        # duplicate_test
-        # error_log_generator
-        # error_log_show
-        # error_log_save2excel
-        # fully_quality_df_show
-        # fully_quality_df_save2excel
+        
+        # df_show - Shows original data frame.
+        # df_save2excel - Saves original data frame to current directory(with index) as excel file.
+        # null_test - Checks for empty/null/meaningless values in all the data frame.
+        # null_specific_test - Checks for empty/null/meaningless values in specific columns.
+        # leadtrail_whitespace_test - Checks for leading/trailing whitespaces in values in specific columns.
+        # alphanumeric_test - Checks for alphanumeric values in specific columns.
+        # name_test - Checks for name values in specific columns.
+        # digit_test - Checks for digit values in specific columns.
+        # date_test - Checks for date format in specific columns and if the date before '1900-01-01' and after today's date.
+        # date_order_test - Checks the order of date columns in specific row in the data frame.
+        # phone_test - Israeli phone validation for specific columns.
+        # dict_test - Checks column value against list of values
+        # context_test - Checkes the value of specific column when other column equal to specific values.
+        # duplicate_test - Checks duplicate rows in data frame based on user definition. 
+        # error_log_generator - Generates error log based on pevious tests.
+        # error_log_show - Shows error log after generation.
+        # error_log_save2excel - Saves error log to current directory as excel file.
+        # fully_quality_df_show - Shows data frame who passed all the tests, based on pevious tests.
+        # fully_quality_df_save2excel - Saves data frame to current directory as excel file.
+    
+    
     # Notice
+        
         # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
         # After initial setup of a data set and table name any test can be used. Do not forget,
             # after running tests run the error_log_generator method to generate an error report.
@@ -47,7 +53,8 @@ class DataQuality:
         self.cwd = os.getcwd()
         
     def df_show(self):
-        return display(self.df)
+        return self.df
+        #return display(self.df)
     
     def df_save2excel(self):
         self.df.to_excel(self.table_name+'_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx')
@@ -74,6 +81,18 @@ class DataQuality:
                     self.row_index_list.append(index),
                     self.dq_test_type_list.append('null_test'),
                     self.runtime_list.append(str(datetime.now()))
+                    
+    def leadtrail_whitespace_test(self,leadtrail_whitespace_columns2check):
+        for column in self.df[leadtrail_whitespace_columns2check]:
+            for index, value in enumerate(self.df[column]):
+                if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
+                    if len([len(item) for item in (re.findall('(^\s*|\s*$)',value)) if len(item) > 0]) > 0:
+                        self.table_list.append(self.table_name),
+                        self.column_list.append(column),
+                        self.original_value_list.append(value),
+                        self.row_index_list.append(index),
+                        self.dq_test_type_list.append('leadtrail_whitespace_test'),
+                        self.runtime_list.append(str(datetime.now()))                
     
     def alphanumeric_test(self,alphanumeric_column2check):
         for column in self.df[alphanumeric_column2check]:
@@ -128,8 +147,22 @@ class DataQuality:
                     self.column_list.append(column),
                     self.original_value_list.append(value),
                     self.row_index_list.append(index),
-                    self.dq_test_type_list.append('date_test'),
+                    self.dq_test_type_list.append('date format error'),
                     self.runtime_list.append(str(datetime.now()))
+                    
+    def date_order_test(self,first_date_column,second_date_column):
+            for index in self.df.index:
+                try:
+                    if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
+                        if pd.to_datetime(self.df[''.join(first_date_column)][index]) > pd.to_datetime(self.df[''.join(second_date_column)][index]):
+                            self.table_list.append(self.table_name),
+                            self.column_list.append(''.join(first_date_column)+', '+''.join(second_date_column)),
+                            self.original_value_list.append(self.df[''.join(first_date_column)][index]+', '+self.df[''.join(second_date_column)][index]),
+                            self.row_index_list.append(index),
+                            self.dq_test_type_list.append('date_order_test'),
+                            self.runtime_list.append(str(datetime.now()))
+                except:
+                    pass    
                     
     def phone_test(self,phone_column2check):
         for column in self.df[phone_column2check]:
@@ -164,7 +197,7 @@ class DataQuality:
                     self.row_index_list.append(index),
                     self.dq_test_type_list.append('context_test'),
                     self.runtime_list.append(str(datetime.now()))
-                    
+    
     def duplicate_test(self,duplicate_column2check):
         for value in self.df.index[self.df.duplicated(subset=duplicate_column2check, keep=False)]:
             self.table_list.append(self.table_name),
@@ -177,11 +210,12 @@ class DataQuality:
     def error_log_generator(self):
         self.error_log = pd.DataFrame(list(zip(self.table_list, self.column_list, self.row_index_list, self.original_value_list, 
                                      self.dq_test_type_list, self.runtime_list)), 
-           columns =['Table', 'Column', 'Row_index', 'Original_value', 'DQ_test_type', 'Runtime']).drop_duplicates(subset=['Column','Row_index']).reset_index(drop=True)
+           columns =['Table', 'Columns', 'Row_index', 'Original_values', 'DQ_test_type', 'Runtime']).drop_duplicates(subset=['Columns','Row_index']).reset_index(drop=True).sort_values('Row_index')
         print('Error log created successfully!')
         
     def error_log_show(self):
-        return display(self.error_log)
+        return self.error_log
+        #return display(self.error_log)
     
     def error_log_save2excel(self):
         self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
@@ -189,7 +223,8 @@ class DataQuality:
     
     def fully_quality_df_show(self):
         self.fully_quality_df = self.df.loc[~self.df.index.isin(set(self.error_log['Row_index']))]
-        return display(self.fully_quality_df)
+        return self.fully_quality_df
+        #return display(self.fully_quality_df)
     
     def fully_quality_df_save2excel(self):
         self.fully_quality_df.to_excel(self.table_name+'_FullyQuality_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
