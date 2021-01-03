@@ -28,15 +28,14 @@
         # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
         # After initial setup of a data set and table name any test can be used. Do not forget,
             # after running tests run the error_log_generator method to generate an error report.
-        # When defining a data set it is important to make sure that all the fields are set as a string,
-            # null values will still remain as a float, do not worry the code knows how to deal with them. This will prevent unwanted errors.
-        
+            
 import pandas as pd
 import numpy as np
 import re
 from datetime import *
 import os
 from sqlalchemy import create_engine
+import hvplot.pandas
 
 
 class DataQuality:
@@ -54,7 +53,6 @@ class DataQuality:
         
     def df_show(self):
         return self.df
-        #return display(self.df)
     
     def df_save2excel(self):
         self.df.to_excel(self.table_name+'_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx')
@@ -86,7 +84,7 @@ class DataQuality:
         for column in self.df[leadtrail_whitespace_columns2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                    if len([len(item) for item in (re.findall('(^\s*|\s*$)',value)) if len(item) > 0]) > 0:
+                    if len([len(item) for item in (re.findall('(^\s*|\s*$)',str(value))) if len(item) > 0]) > 0:
                         self.table_list.append(self.table_name),
                         self.column_list.append(column),
                         self.original_value_list.append(value),
@@ -98,7 +96,7 @@ class DataQuality:
         for column in self.df[alphanumeric_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^[a-zA-Z0-9]*$','',value))> 0:
+                        if len(re.sub('^[a-zA-Z0-9]*$','',str(value)))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
@@ -110,7 +108,7 @@ class DataQuality:
         for column in self.df[name_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^[a-zA-Zא-ת\s]*$','',value))> 0:
+                        if len(re.sub('^[a-zA-Zא-ת\s]*$','',str(value)))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
@@ -122,7 +120,7 @@ class DataQuality:
         for column in self.df[digit_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^[0-9]*$','',value))> 0:
+                        if len(re.sub('^[0-9]*$','',str(value).replace('.','',1)))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
@@ -168,7 +166,7 @@ class DataQuality:
         for column in self.df[phone_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^(0|972|)(?:[23489]|5[0-689]|7[234679])(\d{7})$','',value.replace('-','')))> 0:
+                        if len(re.sub('^(0|972|)(?:[23489]|5[0-689]|7[234679])(\d{7})$','',str(value).replace('-','')))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
@@ -179,7 +177,7 @@ class DataQuality:
     def dict_test(self,dict_column2check,list_column):
             for index, value in enumerate(self.df[''.join(dict_column2check)]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if value not in [str(item) for item in list_column]:
+                        if value not in [item for item in list_column]:
                             self.table_list.append(self.table_name),
                             self.column_list.append(''.join(dict_column2check)),
                             self.original_value_list.append(value),
@@ -189,23 +187,31 @@ class DataQuality:
                             
     def context_test(self,context_column2check,context_column2check_value,context_column2check_against,context_list2check):
         for index, value in enumerate(self.df[''.join(context_column2check)]):
-            if self.df.loc[index, ''.join(context_column2check)] == str(context_column2check_value):
-                if self.df.loc[index,''.join(context_column2check_against)] not in [str(item) for item in context_list2check]:
-                    self.table_list.append(self.table_name),
-                    self.column_list.append(''.join(context_column2check_against)),
-                    self.original_value_list.append(self.df.loc[index,''.join(context_column2check_against)]),
-                    self.row_index_list.append(index),
-                    self.dq_test_type_list.append('context_test'),
-                    self.runtime_list.append(str(datetime.now()))
+            try:
+                if self.df.loc[index, ''.join(context_column2check)] == context_column2check_value:
+                    if self.df.loc[index,''.join(context_column2check_against)] not in [item for item in context_list2check]:
+                        self.table_list.append(self.table_name),
+                        self.column_list.append(''.join(context_column2check_against)),
+                        self.original_value_list.append(self.df.loc[index,''.join(context_column2check_against)]),
+                        self.row_index_list.append(index),
+                        self.dq_test_type_list.append('context_test'),
+                        self.runtime_list.append(str(datetime.now()))
+            except:
+                pass
     
     def duplicate_test(self,duplicate_column2check):
         for value in self.df.index[self.df.duplicated(subset=duplicate_column2check, keep=False)]:
-            self.table_list.append(self.table_name),
-            self.column_list.append(', '.join([str(item) for item in duplicate_column2check])),
-            self.original_value_list.append(', '.join([item for item in self.df.loc[value,duplicate_column2check]])),
-            self.row_index_list.append(value),
-            self.dq_test_type_list.append('duplicate_test'),
-            self.runtime_list.append(str(datetime.now()))
+            try:
+                for item in [item for item in self.df.loc[value,duplicate_column2check]]:
+                    if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(item)))> 0) and (len(re.sub('^\s*$','',str(item)))> 0) and (pd.isnull(item) is False):
+                        self.table_list.append(self.table_name),
+                        self.column_list.append(', '.join([str(item) for item in duplicate_column2check])),
+                        self.original_value_list.append(', '.join([str(item) for item in self.df.loc[value,duplicate_column2check]])),
+                        self.row_index_list.append(value),
+                        self.dq_test_type_list.append('duplicate_test'),
+                        self.runtime_list.append(str(datetime.now()))
+            except:
+                pass
             
     def error_log_generator(self):
         self.error_log = pd.DataFrame(list(zip(self.table_list, self.column_list, self.row_index_list, self.original_value_list, 
@@ -214,17 +220,22 @@ class DataQuality:
         print('Error log created successfully!')
         
     def error_log_show(self):
-        return self.error_log
-        #return display(self.error_log)
+        Columns_visual_df = self.error_log.Columns.value_counts()
+        DQ_test_type_visual_df = self.error_log.DQ_test_type.value_counts()
+        display(Columns_visual_df.hvplot.bar(y='Columns'))
+        display(DQ_test_type_visual_df.hvplot.bar(y='DQ_test_type'))
+        return self.error_log.drop_duplicates(subset=['Columns','Original_values','DQ_test_type'])
+        #return self.error_log
     
     def error_log_save2excel(self):
-        self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
+        self.error_log.drop_duplicates(subset=['Columns','Original_values','DQ_test_type']).to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
+        #self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
         print(f'File saved to {self.cwd} successfully!')
     
     def fully_quality_df_show(self):
         self.fully_quality_df = self.df.loc[~self.df.index.isin(set(self.error_log['Row_index']))]
+        print(str(len(self.fully_quality_df)/len(self.df)*100)+'%'+' of the Data is fully quality!')
         return self.fully_quality_df
-        #return display(self.fully_quality_df)
     
     def fully_quality_df_save2excel(self):
         self.fully_quality_df.to_excel(self.table_name+'_FullyQuality_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
