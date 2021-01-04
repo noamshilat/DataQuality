@@ -1,4 +1,4 @@
-# Documentation
+﻿# Documentation
 
     # Methods
         
@@ -228,9 +228,11 @@ class DataQuality:
         #return self.error_log
     
     def error_log_save2excel(self):
-        self.error_log.drop_duplicates(subset=['Columns','Original_values','DQ_test_type']).to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
-        #self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
-        print(f'File saved to {self.cwd} successfully!')
+        with pd.ExcelWriter(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx') as writer:
+            self.error_log.drop_duplicates(subset=['Columns','Original_values','DQ_test_type']).to_excel(writer,sheet_name='Error Log',index=False)
+            #self.error_log.to_excel(self.table_name+'_ErrorLog_'+datetime.today().strftime('%d_%m_%Y')+'.xlsx',index=False)
+            self.error_log[['Columns','Row_index','DQ_test_type']].groupby(['DQ_test_type','Columns']).Row_index.size().to_frame().rename(columns={'Row_index':'Count_of_cells'}).to_excel(writer,sheet_name='Aggregate Error Log')
+        print(f'Files saved to {self.cwd} successfully!')
     
     def fully_quality_df_show(self):
         self.fully_quality_df = self.df.loc[~self.df.index.isin(set(self.error_log['Row_index']))]
