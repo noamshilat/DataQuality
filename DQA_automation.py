@@ -1,4 +1,4 @@
-﻿# Documentation
+# Documentation
 
     # Methods
         
@@ -48,7 +48,7 @@ class DataQuality:
         self.original_value_list = []
         self.dq_test_type_list = []
         self.runtime_list = []
-        self.df = df
+        self.df = df.drop_duplicates()
         self.cwd = os.getcwd()
         
     def df_show(self):
@@ -108,7 +108,7 @@ class DataQuality:
         for column in self.df[name_column2check]:
             for index, value in enumerate(self.df[column]):
                 if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if len(re.sub('^[a-zA-Zא-ת\s]*$','',str(value)))> 0:
+                        if len(re.sub('^[a-zA-Zא-ת\s]*$','',str(value).replace('-','').replace('"','').replace("'",'')))> 0:
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
