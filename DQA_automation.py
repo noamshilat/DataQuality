@@ -1,4 +1,4 @@
-# Documentation
+﻿# Documentation
 
     # Methods
         
@@ -128,12 +128,12 @@ class DataQuality:
                             self.dq_test_type_list.append('digit_test'),
                             self.runtime_list.append(str(datetime.now()))
     
-    def date_test(self,date_columns):
+    def date_test(self,date_columns,min_date= '1900-01-01', max_date=date.today()):
         for column in self.df[date_columns]:
             for index, value in enumerate(self.df[column]):
                 try:
                     if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if (pd.to_datetime(value) > date.today()) or (pd.to_datetime(value) < pd.to_datetime('1900-01-01')):
+                        if (pd.to_datetime(value) > (max_date)) or (pd.to_datetime(value) < pd.to_datetime(min_date)):
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
