@@ -25,7 +25,7 @@
     
     # Notice
         
-        # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure.
+        # All inputs should be in a list structure, except for the context_column2check_value argument in the context_test method that should be in a string structure and min and max date in date_test.
         # After initial setup of a data set and table name any test can be used. Do not forget,
             # after running tests run the error_log_generator method to generate an error report.
             
