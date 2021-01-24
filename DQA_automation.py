@@ -133,7 +133,7 @@ class DataQuality:
             for index, value in enumerate(self.df[column]):
                 try:
                     if (len(re.sub('[!@#$%^&*(),.?":{}|<>]','',str(value)))> 0) and (len(re.sub('^\s*$','',str(value)))> 0) and (pd.isnull(value) is False):
-                        if pd.to_datetime(min_date) > pd.to_datetime(value) > pd.to_datetime(max_date):
+                        if not pd.to_datetime(min_date) > pd.to_datetime(value) > pd.to_datetime(max_date):
                             self.table_list.append(self.table_name),
                             self.column_list.append(column),
                             self.original_value_list.append(value),
