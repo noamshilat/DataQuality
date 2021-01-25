@@ -1,3 +1,16 @@
+# Documentation
+
+    # Methods
+        
+        # run_matching - Run the test.
+    
+    
+    # Notice
+        
+        # The main goal of this class is to implement FuzzyWuzzy on a data frame using column as main data and lookup list or column as data to compare with.
+        # The class takes data frame, data frame column name, lookup list and imagination ratio (default is 80). 
+        # The class run on the entire column values and search for matches in the lookup list. if there is a match - it generates a new value in columm_matched column.
+
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import pandas as pd
