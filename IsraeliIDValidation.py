@@ -1,3 +1,9 @@
+# Documentation
+    
+    # Notice
+        
+        # The function takes Israeli ID and return True/False if the ID (TZ) is Valid/Invalid.
+
 def israeli_tz_validation(tz):
     digits_after_multiplication = []
     tz = str(tz)
