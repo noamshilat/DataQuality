@@ -2,7 +2,7 @@
     
     # Notice
         
-        # The function takes Israeli ID and return True/False if the ID (TZ) is Valid/Invalid.
+        # The function takes Israeli ID and return True/False if the ID (TZ) is Valid/Invalid. The input data type can be STR or INT. 
 
 def israeli_tz_validation(tz):
     digits_after_multiplication = []
